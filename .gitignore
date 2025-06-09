@@ -1,0 +1,25 @@
+# Ignore dependencies
+node_modules/
+venv/
+
+# Ignore Python artifacts
+*.pyc
+__pycache__/
+
+# Ignore env files
+.env*
+*.log
+
+# Ignore build/output
+dist/
+build/
+
+# Ignore uploads
+uploads/
+backend/uploads/
+frontend/uploads/
+
+# Ignore IDE/system files
+.vscode/
+.DS_Store
+Thumbs.db
