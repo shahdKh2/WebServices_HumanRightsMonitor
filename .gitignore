@@ -15,9 +15,7 @@ dist/
 build/
 
 # Ignore uploads
-uploads/
-backend/uploads/
-frontend/uploads/
+
 
 # Ignore IDE/system files
 .vscode/
