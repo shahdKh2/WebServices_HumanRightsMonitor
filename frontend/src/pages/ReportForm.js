@@ -1,6 +1,45 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import LocationPicker from './LocationPicker'; 
+import LocationPicker from './LocationPicker';
+
+// Style Constants
+const containerStyle = {
+  maxWidth: "100%",
+  padding: "40px",
+  margin: "0 auto",
+  fontFamily: "Arial, sans-serif",
+};
+
+const titleStyle = {
+  textAlign: "center",
+  marginBottom: "30px",
+  color: "#2c3e50",
+};
+
+const buttonStyle = {
+  padding: "10px 20px",
+  backgroundColor: "#98768E",
+  color: "white",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+};
+
+const inputStyle = {
+  padding: "8px",
+  borderRadius: "5px",
+  border: "1px solid #ccc",
+  width: "100%",
+};
+
+const checkboxStyle = {
+  transform: "scale(1.2)",
+};
+
+const messageStyle = (type) => ({
+  color: type === 'error' ? 'red' : 'green',
+  fontWeight: 'bold',
+});
 
 function ReportForm() {
   const [form, setForm] = useState({
@@ -74,8 +113,8 @@ function ReportForm() {
   };
 
   return (
-    <div style={{ padding: '30px', maxWidth: '800px', margin: 'auto', fontFamily: 'Arial, sans-serif' }}>
-      <h2>📣 Human Rights Incident Report</h2>
+    <div style={containerStyle}>
+      <h2 style={titleStyle}>📣 Human Rights Incident Report</h2>
 
       <div className="form-grid">
         <label>Violation Type:</label>
@@ -85,6 +124,7 @@ function ReportForm() {
           value={form.violationType} 
           onChange={handleChange} 
           required
+          style={inputStyle}
         />
 
         <label>Description:</label>
@@ -94,6 +134,7 @@ function ReportForm() {
           value={form.description} 
           onChange={handleChange} 
           required
+          style={inputStyle}
         />
 
         <label>City:</label>
@@ -102,6 +143,7 @@ function ReportForm() {
           placeholder="City" 
           value={form.city} 
           onChange={handleChange} 
+          style={inputStyle}
         />
 
         <label>Country:</label>
@@ -110,6 +152,7 @@ function ReportForm() {
           placeholder="Country" 
           value={form.country} 
           onChange={handleChange} 
+          style={inputStyle}
         />
 
         <label>Submit Anonymously:</label>
@@ -118,6 +161,7 @@ function ReportForm() {
           name="anonymous"
           checked={form.anonymous} 
           onChange={handleChange} 
+          style={checkboxStyle}
         />
 
         {!form.anonymous && (
@@ -129,6 +173,7 @@ function ReportForm() {
               placeholder="Your email" 
               value={form.email} 
               onChange={handleChange} 
+              style={inputStyle}
             />
 
             <label>Phone:</label>
@@ -138,6 +183,7 @@ function ReportForm() {
               placeholder="Your phone number" 
               value={form.phone} 
               onChange={handleChange} 
+              style={inputStyle}
             />
           </>
         )}
@@ -147,6 +193,7 @@ function ReportForm() {
           type="file" 
           name="file"
           onChange={handleChange} 
+          style={inputStyle}
         />
 
         <label>Select Location on Map:</label>
@@ -154,12 +201,13 @@ function ReportForm() {
       </div>
 
       <br />
-      <button onClick={submitReport} disabled={isSubmitting} style={{ padding: '10px 20px', fontSize: '16px' }}>
+      <button onClick={submitReport} disabled={isSubmitting} style={buttonStyle}>
         {isSubmitting ? 'Submitting...' : '📤 Submit Report'}
-      </button><br /><br />
+      </button>
+      <br /><br />
 
       {message.text && (
-        <div style={{ color: message.type === 'error' ? 'red' : 'green', fontWeight: 'bold' }}>
+        <div style={messageStyle(message.type)}>
           {Array.isArray(message.text)
             ? message.text.map((err, idx) => (
                 <div key={idx}>❌ {err.loc?.[err.loc.length - 1] || 'Field'}: {err.msg}</div>
