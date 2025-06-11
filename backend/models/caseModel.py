@@ -1,11 +1,14 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 from datetime import datetime
+from bson import ObjectId
+
 
 class Location(BaseModel):
     country: str
     region: str
     coordinates: dict
+
 
 class CaseModel(BaseModel):
     # case_id: str
@@ -28,4 +31,4 @@ class CaseModel(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         extra = "forbid"
-        allow_mutation = True  
+        allow_mutation = True

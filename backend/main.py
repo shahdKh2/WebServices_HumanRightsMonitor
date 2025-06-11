@@ -1,12 +1,29 @@
-# # main.py
+# main.py
+from routes.victims import router as victim_router  # import your victim router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import router
 from fastapi.staticfiles import StaticFiles
+from routes.routes import router as cases_router
+from routes.victims import router as victims_router
+
 import os
 
-from fastapi.staticfiles import StaticFiles
+app = FastAPI()
 
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Serve static files (uploaded evidence)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+# Include both routers
+app.include_router(cases_router)
 
 app = FastAPI()
 
@@ -17,6 +34,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
-app.include_router(router)
+# Include routers
+app.include_router(cases_router)
+app.include_router(victim_router)

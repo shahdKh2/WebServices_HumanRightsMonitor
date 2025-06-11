@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Query
 from database import db
-from models import CaseModel
+from models.caseModel import CaseModel
 from datetime import datetime
 from fastapi import Body
 import os
