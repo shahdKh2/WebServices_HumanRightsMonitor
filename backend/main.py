@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from routes.routes import router as cases_router
 from routes.victims import router as victims_router
-
+from routes.report_routes import router as report_router
 import os
 
 app = FastAPI()
@@ -40,3 +40,4 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 # Include routers
 app.include_router(cases_router)
 app.include_router(victim_router)
+app.include_router(report_router, prefix="/api")

@@ -45,8 +45,10 @@ export default function Header() {
         <span style={titleStyle}>Victim Support Portal</span>
       </div>
       <nav style={navStyle}>
-        <Link to="/list" style={linkStyle}>Victim List</Link>
+        <Link to="/list" style={linkStyle}>Victim</Link>
         <Link to="/CasesPage" style={linkStyle}>Human Rights MIS</Link>
+        <Link to="/ReportForm" style={linkStyle}>Reports</Link>
+
       </nav>
     </header>
   );
