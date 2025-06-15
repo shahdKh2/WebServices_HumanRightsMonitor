@@ -3,40 +3,55 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [role, setRole] = useState('viewer'); // default role
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // NEW
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
-    setUser(JSON.parse(savedUser));
+      setUser(JSON.parse(savedUser));
     }
-    setLoading(false); // Done checking
+    setLoading(false);
   }, []);
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post("http://localhost:8000/auth/login", {
-      email,
-      password,
-    });
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:8000/auth/login", {
+        email,
+        password,
+      });
+      setUser(response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
+      setErrorMsg("");
+      navigate("/HomePage");
+    } catch (error) {
+      setErrorMsg("Invalid email or password");
+    }
+  };
 
-    console.log("Login response:", response.data);
-    setUser(response.data);
-    localStorage.setItem("user", JSON.stringify(response.data));
-    setErrorMsg("");
-
-    // Redirect to homepage
-    navigate("/HomePage");
-  } catch (error) {
-    setErrorMsg("Invalid email or password");
-  }
-};
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:8000/auth/register", {
+        email,
+        password,
+        full_name: fullName,
+        role
+      });
+      alert("Registration successful. You can now log in.");
+      setIsRegistering(false);
+    } catch (error) {
+      alert("Registration failed. Please check your input.");
+    }
+  };
 
   const containerStyle = {
     display: "flex",
@@ -86,6 +101,15 @@ export default function LandingPage() {
     cursor: "pointer",
   };
 
+  const toggleStyle = {
+    marginTop: "1rem",
+    backgroundColor: "transparent",
+    color: "#281E30",
+    border: "none",
+    textDecoration: "underline",
+    cursor: "pointer",
+  };
+
   const rightStyle = {
     flex: 1,
     display: "flex",
@@ -107,29 +131,67 @@ export default function LandingPage() {
       <div style={leftStyle}>
         Victim Support Portal
         <div style={sentenceStyle}>
- Welcome to the Victim Support Portal 👋<br />
-                This platform is dedicated to empowering victims and witnesses with integrity, care, and respect. Please log in to access personalized tools, resources, and information tailored to your role. Together, we can create a safer, more supportive environment for everyone affected. Your journey to making a positive impact starts here.
-                      </div>
-          <form onSubmit={handleLogin} style={formStyle}>
-            {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              required
-              onChange={(e) => setEmail(e.target.value)}
-              style={inputStyle}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              required
-              onChange={(e) => setPassword(e.target.value)}
-              style={inputStyle}
-            />
-            <button type="submit" style={buttonStyle}>Login</button>
-          </form>
+          Welcome to the Victim Support Portal 👋<br />
+          This platform is dedicated to empowering victims and witnesses with integrity, care, and respect.
+        </div>
+
+        <form onSubmit={isRegistering ? handleRegister : handleLogin} style={formStyle}>
+          {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+
+          {isRegistering && (
+            <>
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={fullName}
+                required
+                onChange={(e) => setFullName(e.target.value)}
+                style={inputStyle}
+              />
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                style={inputStyle}
+              >
+                <option value="viewer">Viewer</option>
+                <option value="admin">Admin</option>
+              </select>
+            </>
+          )}
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            required
+            onChange={(e) => setEmail(e.target.value)}
+            style={inputStyle}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            style={inputStyle}
+          />
+          <button type="submit" style={buttonStyle}>
+            {isRegistering ? "Register" : "Login"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsRegistering(!isRegistering);
+              setErrorMsg("");
+            }}
+            style={toggleStyle}
+          >
+            {isRegistering
+              ? "Already have an account? Log in"
+              : "Don't have an account? Register"}
+          </button>
+        </form>
       </div>
       <div style={rightStyle}>
         <img src="/landingPage.png" alt="Landing" style={imageStyle} />

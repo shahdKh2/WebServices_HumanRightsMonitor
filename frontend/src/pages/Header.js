@@ -61,6 +61,9 @@ export default function Header() {
             <Link to="/ReportForm" style={linkStyle}>
           Reports
         </Link>
+            <Link to="/AnalyticsDashboard" style={linkStyle}>
+          Analytics
+        </Link>
             <span
               onClick={() => {
                 localStorage.removeItem("user");
@@ -74,9 +77,7 @@ export default function Header() {
         ) : (
           <Link to="/" style={linkStyle}>Login</Link>
         )}
-        <Link to="/AnalyticsDashboard" style={linkStyle}>
-          Analytics
-        </Link>
+      
       </nav>
     </header>
   );
