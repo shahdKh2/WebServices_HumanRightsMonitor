@@ -9,6 +9,7 @@ import VictimList from "./pages/VictimsList";
 import VictimViewPage from "./pages/VictimViewPage";
 import VictimFormPage from "./pages/VictimFormPage";
 import ReportForm from "./pages/ReportForm";
+import HomePage from "./pages/HomePage";
 
 function App() {
   const appStyle = {
@@ -30,7 +31,8 @@ function App() {
           <Route path="/add" element={<VictimFormPage mode="add" />} />
           <Route path="/CasesPage" element={<CasesPage />} />
           <Route path="/ReportForm" element={<ReportForm />} />
-          
+          <Route path="/HomePage" element={<HomePage />} />
+
         </Routes>
         <Footer />
       </div>

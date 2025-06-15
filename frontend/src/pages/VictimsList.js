@@ -4,20 +4,31 @@ import axios from "axios";
 
 const VictimList = () => {
   const [victims, setVictims] = useState([]);
-  const [cases, setCases] = useState([]); // For cases list
+  const [cases, setCases] = useState([]);
   const [filters, setFilters] = useState({ type: "", risk: "", case: "" });
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  // Load user info from localStorage on mount
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, []);
 
   // Fetch all cases on mount for the selector
   useEffect(() => {
-    axios.get("http://localhost:8000/cases") // Assuming this endpoint returns all cases with id and title
+    axios.get("http://localhost:8000/cases")
       .then((res) => setCases(res.data))
       .catch(() => setCases([]));
   }, []);
 
-  // Fetch victims: 
-  // If case filter is set, fetch victims linked to that case only.
-  // Otherwise fetch all victims.
+  // Fetch victims based on case filter
   useEffect(() => {
     if (filters.case) {
       axios.get(`http://localhost:8000/victims/case/${filters.case}`)
@@ -28,7 +39,7 @@ const VictimList = () => {
         .then((res) => setVictims(res.data))
         .catch(() => setVictims([]));
     }
-  }, [filters.case]); // Re-run when case filter changes
+  }, [filters.case]);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -42,79 +53,18 @@ const VictimList = () => {
     );
   });
 
-const containerStyle = {
-    maxWidth: "100%",
-    padding: "40px",
-    margin: "0 auto",
-    fontFamily: "Arial, sans-serif",
-  };
+  // If user is not admin, show access denied message
+  if (!user || user.role !== "admin") {
+    return (
+      <div style={{ padding: "40px", fontFamily: "Arial, sans-serif", textAlign: "center", color: "#c0392b" }}>
+        <h2>Access Denied</h2>
+        <p>You do not have permission to view this page.</p>
+      </div>
+    );
+  }
 
-  const titleStyle = {
-    textAlign: "center",
-    marginBottom: "30px",
-    color: "#2c3e50",
-  };
+  // ... your existing styles here (or extract them outside the component for cleaner code) ...
 
-  const buttonStyle = {
-    padding: "10px 20px",
-    backgroundColor: "#98768E",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  };
-
-  const filtersStyle = {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "10px",
-    marginBottom: "20px",
-    flexWrap: "wrap",
-  };
-
-  const selectStyle = {
-    padding: "8px",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    minWidth: "140px",
-  };
-
-  const tableStyle = {
-    width: "100%",
-    borderCollapse: "collapse",
-    textAlign: "center",
-  };
-
-  const thStyle = {
-    backgroundColor: "#281E30",
-    color: "white",
-    padding: "10px",
-    border: "1px solid #ddd",
-  };
-
-  const tdStyle = {
-    padding: "10px",
-    border: "1px solid #ddd",
-  };
-
-  const viewBtnStyle = {
-    backgroundColor: "transparent",
-    color: "white",
-    padding: "5px 10px",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  };
-
-  const editBtnStyle = {
-    backgroundColor: "transparent",
-    color: "black",
-    padding: "5px 10px",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  };
-  
   return (
     <div style={{ maxWidth: "100%", padding: "40px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
       <h2 style={{ textAlign: "center", marginBottom: "30px", color: "#2c3e50" }}>🧩 Victim/Witness Management</h2>
@@ -141,7 +91,6 @@ const containerStyle = {
             <option value="high">High</option>
           </select>
 
-          {/* New case filter */}
           <select name="case" onChange={handleFilterChange} value={filters.case} style={{ padding: "8px", borderRadius: "5px", border: "1px solid #ccc", minWidth: "180px" }}>
             <option value="">All Cases</option>
             {cases.map((c) => (
@@ -177,16 +126,28 @@ const containerStyle = {
                 <td style={{ padding: "10px", border: "1px solid #ddd" }}>{v.risk_assessment?.level || "N/A"}</td>
                 <td style={{ padding: "10px", border: "1px solid #ddd" }}>Active</td>
                 <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                  <button style={{ backgroundColor: "transparent", color: "white", padding: "5px 10px", border: "none", borderRadius: "4px", cursor: "pointer" }} onClick={() => navigate(`/view/${v.id}`)}>👁️</button>
+                  <button
+                    style={{ backgroundColor: "transparent", color: "white", padding: "5px 10px", border: "none", borderRadius: "4px", cursor: "pointer" }}
+                    onClick={() => navigate(`/view/${v.id}`)}
+                  >
+                    👁️
+                  </button>
                 </td>
                 <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                  <button style={{ backgroundColor: "transparent", color: "black", padding: "5px 10px", border: "none", borderRadius: "4px", cursor: "pointer" }} onClick={() => navigate(`/edit/${v.id}`)}>✏️</button>
+                  <button
+                    style={{ backgroundColor: "transparent", color: "black", padding: "5px 10px", border: "none", borderRadius: "4px", cursor: "pointer" }}
+                    onClick={() => navigate(`/edit/${v.id}`)}
+                  >
+                    ✏️
+                  </button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="8" style={{ padding: "10px", border: "1px solid #ddd", color: "#888" }}>No victims or witnesses found.</td>
+              <td colSpan="8" style={{ padding: "10px", border: "1px solid #ddd", color: "#888" }}>
+                No victims or witnesses found.
+              </td>
             </tr>
           )}
         </tbody>

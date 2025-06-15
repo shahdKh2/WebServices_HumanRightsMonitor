@@ -1,7 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Header() {
+  const isLoggedIn = !!localStorage.getItem("user");
+  const location = useLocation();
+
   const headerStyle = {
     backgroundColor: "#281E30",
     color: "#F6D4CF",
@@ -36,6 +39,7 @@ export default function Header() {
     textDecoration: "none",
     fontWeight: "normal",
     fontSize: "1rem",
+    cursor: "pointer",
   };
 
   return (
@@ -44,11 +48,26 @@ export default function Header() {
         <img src="/logo.png" alt="Logo" style={logoStyle} />
         <span style={titleStyle}>Victim Support Portal</span>
       </div>
-      <nav style={navStyle}>
-        <Link to="/list" style={linkStyle}>Victim</Link>
-        <Link to="/CasesPage" style={linkStyle}>Human Rights MIS</Link>
-        <Link to="/ReportForm" style={linkStyle}>Reports</Link>
 
+      <nav style={navStyle}>
+        {isLoggedIn ? (
+          <>
+            <Link to="/list" style={linkStyle}>Victim</Link>
+            <Link to="/CasesPage" style={linkStyle}>Human Rights MIS</Link>
+            <Link to="/ReportForm" style={linkStyle}>Reports</Link>
+            <span
+              onClick={() => {
+                localStorage.removeItem("user");
+                window.location.href = "/"; 
+              }}
+              style={linkStyle}
+            >
+              Logout
+            </span>
+          </>
+        ) : (
+          <Link to="/" style={linkStyle}>Login</Link>
+        )}
       </nav>
     </header>
   );

@@ -257,13 +257,18 @@ const handleSubmit = (e) => {
         <div style={styles.section}>
           <h4>🧍 Demographic Information</h4>
           <label style={styles.label}>Gender:</label>
-          <input
-            type="text"
-            value={formData.demographics.gender}
-            onChange={(e) => handleChange(e, "demographics", "gender")}
-            style={styles.input}
-            disabled={isDisabled}
-          />
+<select
+  value={formData.demographics.gender}
+  onChange={(e) => handleChange(e, "demographics", "gender")}
+  style={styles.input}
+  disabled={isDisabled}
+>
+  <option value="">Select Gender</option>
+  <option value="male">Male</option>
+  <option value="female">Female</option>
+  <option value="prefer_not_to_say">Prefer not to say</option>
+</select>
+
           <label style={styles.label}>Age:</label>
           <input
             type="number"
@@ -375,7 +380,7 @@ const handleSubmit = (e) => {
         });
       }}
       style={{ ...styles.input, flexGrow: 1 }}
-      disabled={isDisabled}
+      disabled={false}
       placeholder="Enter threat description"
     />
     <button
@@ -391,7 +396,7 @@ const handleSubmit = (e) => {
         });
       }}
       style={{ marginLeft: "0.5rem", backgroundColor: "#dc3545", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}
-      disabled={isDisabled}
+      disabled={false}
     >
       Remove
     </button>
@@ -409,7 +414,7 @@ const handleSubmit = (e) => {
     });
   }}
   style={styles.button}
-  disabled={isDisabled}
+  disabled={false}
 >
   + Add Threat
 </button>
@@ -421,7 +426,7 @@ const handleSubmit = (e) => {
               checked={formData.risk_assessment.protection_needed}
               onChange={(e) => handleChange(e, "risk_assessment", "protection_needed")}
               style={styles.checkbox}
-              disabled={isDisabled}
+            disabled={false}
             />
             Protection Needed?
           </label>
@@ -439,7 +444,6 @@ const handleSubmit = (e) => {
                 }
                 style={styles.input}
                 disabled={isDisabled}
-                placeholder="e.g., Psychological Support"
                 required
               />
 
@@ -451,7 +455,6 @@ const handleSubmit = (e) => {
                   handleSupportServiceChange(index, "provider", e.target.value)
                 }
                 style={styles.input}
-                placeholder="e.g., NGO XYZ"
                 disabled={isDisabled}
                 required
               />
