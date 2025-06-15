@@ -52,9 +52,15 @@ export default function Header() {
       <nav style={navStyle}>
         {isLoggedIn ? (
           <>
-            <Link to="/list" style={linkStyle}>Victim</Link>
-            <Link to="/CasesPage" style={linkStyle}>Human Rights MIS</Link>
-            <Link to="/ReportForm" style={linkStyle}>Reports</Link>
+            <Link to="/list" style={linkStyle}>
+          Victim
+        </Link>
+            <Link to="/CasesPage" style={linkStyle}>
+          Human Rights MIS
+        </Link>
+            <Link to="/ReportForm" style={linkStyle}>
+          Reports
+        </Link>
             <span
               onClick={() => {
                 localStorage.removeItem("user");
@@ -68,6 +74,9 @@ export default function Header() {
         ) : (
           <Link to="/" style={linkStyle}>Login</Link>
         )}
+        <Link to="/AnalyticsDashboard" style={linkStyle}>
+          Analytics
+        </Link>
       </nav>
     </header>
   );

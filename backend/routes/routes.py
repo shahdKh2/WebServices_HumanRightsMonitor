@@ -1,4 +1,5 @@
 
+# routes.py
 from fastapi import APIRouter, HTTPException, UploadFile, File, Query
 from database import db
 from models.caseModel import CaseModel
@@ -171,3 +172,122 @@ async def archive_case(case_id: str):
         raise HTTPException(
             status_code=404, detail="Case not found or not updated")
     return {"message": "Case archived"}
+
+# ====================TASK 4=======================
+
+
+@router.get("/analytics/violations")
+async def get_violations_summary(
+    start_date: str = Query(None),
+    end_date: str = Query(None),
+    region: str = Query(None),
+    type: str = Query(None)
+):
+    match_stage = {}
+
+    if start_date or end_date:
+        date_filter = {}
+        if start_date:
+            date_filter["$gte"] = datetime.fromisoformat(start_date)
+        if end_date:
+            date_filter["$lte"] = datetime.fromisoformat(end_date)
+        match_stage["date_occurred"] = date_filter
+
+    if region:
+        match_stage["location.region"] = {"$regex": region, "$options": "i"}
+
+    if type:
+        match_stage["violation_types"] = type
+
+    pipeline = []
+
+    if match_stage:
+        pipeline.append({"$match": match_stage})
+
+    pipeline += [
+        {"$unwind": "$violation_types"},
+        {"$group": {"_id": "$violation_types", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+
+    results = await db["cases"].aggregate(pipeline).to_list(length=100)
+    return {r["_id"]: r["count"] for r in results}
+
+@router.get("/analytics/geodata")
+async def count_by_region(
+    start_date: str = Query(None),
+    end_date: str = Query(None),
+    type: str = Query(None),
+    region: str = Query(None)  # 👈 Add this line
+):
+    match_stage = {}
+
+    if start_date or end_date:
+        date_filter = {}
+        if start_date:
+            date_filter["$gte"] = datetime.fromisoformat(start_date)
+        if end_date:
+            date_filter["$lte"] = datetime.fromisoformat(end_date)
+        match_stage["date_occurred"] = date_filter
+
+    if type:
+        match_stage["violation_types"] = type
+
+    if region:
+        match_stage["location.region"] = {"$regex": region, "$options": "i"} 
+
+    pipeline = []
+
+    if match_stage:
+        pipeline.append({"$match": match_stage})
+
+    pipeline += [
+        {"$group": {"_id": "$location.region", "count": {"$sum": 1}}}
+    ]
+
+    results = await db["cases"].aggregate(pipeline).to_list(length=None)
+    return {r["_id"]: r["count"] for r in results}
+
+
+@router.get("/analytics/timeline")
+async def count_by_month(
+    start_date: str = Query(None),
+    end_date: str = Query(None),
+    region: str = Query(None),
+    type: str = Query(None)
+):
+    match_stage = {}
+
+    if start_date or end_date:
+        date_filter = {}
+        if start_date:
+            date_filter["$gte"] = datetime.fromisoformat(start_date)
+        if end_date:
+            date_filter["$lte"] = datetime.fromisoformat(end_date)
+        match_stage["date_occurred"] = date_filter
+
+    if region:
+        match_stage["location.region"] = {"$regex": region, "$options": "i"}
+
+    if type:
+        match_stage["violation_types"] = type
+
+    pipeline = []
+
+    if match_stage:
+        pipeline.append({"$match": match_stage})
+
+    pipeline += [
+        {
+            "$group": {
+                "_id": {
+                    "$dateToString": {"format": "%Y-%m", "date": "$date_occurred"}
+                },
+                "count": {"$sum": 1}
+            }
+        },
+        {"$sort": {"_id": 1}}
+    ]
+
+    results = await db["cases"].aggregate(pipeline).to_list(length=None)
+    return {r["_id"]: r["count"] for r in results}

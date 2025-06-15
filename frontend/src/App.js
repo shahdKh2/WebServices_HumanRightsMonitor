@@ -10,7 +10,7 @@ import VictimViewPage from "./pages/VictimViewPage";
 import VictimFormPage from "./pages/VictimFormPage";
 import ReportForm from "./pages/ReportForm";
 import HomePage from "./pages/HomePage";
-
+import AnalyticsDashboard from "./pages/AnalyticsDashboard"; // ✅ Import the new component
 function App() {
   const appStyle = {
     minHeight: "100vh",
@@ -31,6 +31,10 @@ function App() {
           <Route path="/add" element={<VictimFormPage mode="add" />} />
           <Route path="/CasesPage" element={<CasesPage />} />
           <Route path="/ReportForm" element={<ReportForm />} />
+          <Route
+            path="/AnalyticsDashboard"
+            element={<AnalyticsDashboard />}
+          />
           <Route path="/HomePage" element={<HomePage />} />
 
         </Routes>
