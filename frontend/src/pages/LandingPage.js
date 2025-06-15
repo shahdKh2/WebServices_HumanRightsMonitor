@@ -152,6 +152,7 @@ export default function LandingPage() {
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 style={inputStyle}
+                
               >
                 <option value="viewer">Viewer</option>
                 <option value="admin">Admin</option>
